@@ -1,4 +1,4 @@
-package buissness
+package business
 
 import (
 	genericModels "InterviewPractice/src/models"

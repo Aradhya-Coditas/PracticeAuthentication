@@ -1,7 +1,7 @@
 package router
 
 import (
-	"admin-app/authentiction/buissness"
+	"admin-app/authentiction/business"
 	"admin-app/authentiction/handlers"
 	"admin-app/authentiction/repositories"
 
@@ -16,7 +16,7 @@ func GetRouter() *gin.Engine {
 	// router.POST("Create Login", "Handelers")
 
 	createUserRepository := repositories.NewCreateUserWatchlist()
-	createUserService := buissness.NewCreateUserSService(createUserRepository)
+	createUserService := business.NewCreateUserSService(createUserRepository)
 	createUserController := handlers.NewCreateUserController(createUserService)
 
 	router.POST("/createUser", createUserController.CreateUserHandler)

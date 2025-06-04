@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"admin-app/authentiction/buissness"
+	"admin-app/authentiction/business"
 	"admin-app/authentiction/models"
 	"net/http"
 
@@ -9,10 +9,10 @@ import (
 )
 
 type CreateUserController struct {
-	service *buissness.CreateUserService
+	service *business.CreateUserService
 }
 
-func NewCreateUserController(service *buissness.CreateUserService) *CreateUserController {
+func NewCreateUserController(service *business.CreateUserService) *CreateUserController {
 	return &CreateUserController{
 		service: service,
 	}
