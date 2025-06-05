@@ -4,11 +4,12 @@ import (
 	"admin-app/authentiction/business"
 	"admin-app/authentiction/models"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-type CreateUserController struct {
+type createUserController struct {
 	service *business.CreateUserService
 }
 
@@ -21,13 +22,13 @@ type CreateUserController struct {
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
 // @Router /createUser [post]
-func NewCreateUserController(service *business.CreateUserService) *CreateUserController {
-	return &CreateUserController{
+func NewCreateUserController(service *business.CreateUserService) *createUserController {
+	return &createUserController{
 		service: service,
 	}
 }
 
-func (controller *CreateUserController) CreateUserHandler(c *gin.Context) {
+func (controller *createUserController) CreateUserHandler(c *gin.Context) {
 	var bffCreateUserRequest models.BFFCreateUserRequest
 	if err := c.ShouldBindJSON(&bffCreateUserRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -41,13 +42,24 @@ func (controller *CreateUserController) CreateUserHandler(c *gin.Context) {
 
 	err := controller.service.CreateNewUser(c, c, bffCreateUserRequest)
 	if err != nil {
+		if strings.Contains(err.Error(), "record not found") {
+			errorResponse := models.ErrorAPIResponse{
+				Error:   http.StatusNotFound,
+				Message: "Record not found",
+			}
+			c.JSON(http.StatusNotFound, errorResponse)
+			return
+		}
+		if strings.Contains(err.Error(), "record not found") {
+			errorResponse := models.ErrorMessage{
+				Key:         http.StatusNotFound,
+				ErrorMessage: "Record not found",
+			}
+			c.JSON(http.StatusNotFound, errorResponse)
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusInternalServerError, models.ErrorAPIResponse{
-		Error: "User Creation Failed Error",
-	})
-	return
-
 	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
 }
